@@ -1,0 +1,15 @@
+{
+    "name": "dhrumil/php-mvc",
+    "autoload": {
+        "psr-4": {
+            "app\\": "./"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dhrumil Sangani",
+            "email": "dhrumilsangani11@gmail.com"
+        }
+    ],
+    "require": {}
+}
