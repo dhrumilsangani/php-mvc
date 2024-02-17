@@ -3,13 +3,14 @@
 namespace app\models;
 
 use app\core\DBModel;
+use app\core\UserModel;
 
 /**
  * Summary of User
  * @author Dhrumil Sangani
  * @copyright (c) 2024
  */
-class User extends DBModel {
+class User extends UserModel {
     const STATUS_INACTIVE = 0;
     const STATUS_ACTIVE = 1;
     const STATUS_DELETE = 2;
@@ -39,6 +40,17 @@ class User extends DBModel {
             'password' => 'Password',
             'confirmPassword' => 'Confirm Password',
         ];
+    }
+
+    
+    public function primaryKey(): string
+    {
+        return 'id';
+    }
+
+    public function getDisplayName(): string
+    {
+        return $this->first_name.' '.$this->last_name;
     }
 
     public function save() {

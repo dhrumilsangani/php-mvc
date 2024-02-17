@@ -11,6 +11,8 @@ abstract class DBModel extends Model {
     abstract public function tableName(): string;
 
     abstract public function attributes(): array;
+    
+    abstract public function primaryKey(): string;
 
     public function save()
     {
@@ -26,6 +28,18 @@ abstract class DBModel extends Model {
         return true;
     }
     
+    public function findOne($where) {
+        $tableName = static::tableName();
+        $attributes = array_keys($where);
+        $sql = implode("AND ", array_map(fn($attr) => "$attr = :$attr", $attributes));
+        $stmt = self::prepare("SELECT * FROM $tableName WHERE $sql");
+        foreach($where as $key => $item) {
+            $stmt->bindValue(":$key", $item);
+        }
+        $stmt->execute();
+        return $stmt->fetchObject(static::class);
+    }
+
     public function prepare($sql) {
         return Application::$app->db->pdo->prepare($sql);
     }

@@ -14,7 +14,9 @@ class Application{
     public Response $response;
     public Session $session;
     public Controller $controller;
+    public ?DBModel $user;
     public Database $db;
+    public string $userClass; 
     /**
      * Summary of __construct
      * @param mixed $rootPath
@@ -25,9 +27,19 @@ class Application{
         $this->request = new Request();
         $this->response = new Response();
         $this->session = new Session();
+        $this->userClass = $config['userClass'];
         $this->router = new Router($this->request, $this->response);
 
         $this->db = new Database($config['db']);
+
+        $primaryValue = $this->session->get('user');
+        $userModel = new $this->userClass;
+        if($primaryValue) {
+            $primaryKey = $userModel->primaryKey();
+            $this->user = $userModel->findOne([$primaryKey => $primaryValue]);
+        } else {
+            $this->user = null;
+        }
     }
     /**
      * Summary of run
@@ -50,5 +62,22 @@ class Application{
      */
     public function setController(Controller $controller) {
         $this->controller = $controller;
-    } 
+    }
+    
+    public function login(DBModel $user) {
+        $this->user = $user;
+        $primaryKey = $user->primaryKey();
+        $primaryValue = $user->{$primaryKey};
+        $this->session->set('user', $primaryValue);
+        return true; 
+    }
+
+    public function logout() {
+        $this->user = null;
+        $this->session->remove('user');
+    }
+
+    public static function isGuest() {
+        return !self::$app->user;
+    }
 } 
