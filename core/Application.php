@@ -13,10 +13,11 @@ class Application{
     public Request $request;
     public Response $response;
     public Session $session;
-    public Controller $controller;
+    public ?Controller $controller = null;
     public ?DBModel $user;
     public Database $db;
     public string $userClass; 
+    public string $layout = 'main'; 
     /**
      * Summary of __construct
      * @param mixed $rootPath
@@ -46,7 +47,14 @@ class Application{
      * @return void
      */
     public function run() {
-        echo $this->router->resolve();
+        try {
+            echo $this->router->resolve();
+        } catch (\Exception $e) {
+            $this->response->setStatusCode($e->getCode());
+            echo $this->router->renderView('_error', [
+                'exception' => $e
+            ]);
+        }
     }
     /**
      * Summary of getController
