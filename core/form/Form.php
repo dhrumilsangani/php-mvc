@@ -4,7 +4,7 @@ namespace app\core\form;
 use app\core\Model;
 
 /**
- * Summary of Field
+ * Summary of Form
  * @author Dhrumil Sangani
  * @copyright (c) 2024
  */
@@ -18,6 +18,6 @@ class Form {
         echo '</form>';
     }
     public static function field(Model $model ,$method) {
-        return new Field($model, $method);
+        return new InputField($model, $method);
     }
 }

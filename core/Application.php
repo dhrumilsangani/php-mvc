@@ -1,6 +1,7 @@
 <?php
 
 namespace app\core;
+use app\core\db\Database;
 /**
  * Summary of Application
  * @author Dhrumil Sangani
@@ -14,8 +15,9 @@ class Application{
     public Response $response;
     public Session $session;
     public ?Controller $controller = null;
-    public ?DBModel $user;
+    public ?UserModel $user;
     public Database $db;
+    public View $view;
     public string $userClass; 
     public string $layout = 'main'; 
     /**
@@ -28,6 +30,7 @@ class Application{
         $this->request = new Request();
         $this->response = new Response();
         $this->session = new Session();
+        $this->view = new View();
         $this->userClass = $config['userClass'];
         $this->router = new Router($this->request, $this->response);
 
@@ -51,7 +54,7 @@ class Application{
             echo $this->router->resolve();
         } catch (\Exception $e) {
             $this->response->setStatusCode($e->getCode());
-            echo $this->router->renderView('_error', [
+            echo $this->view->renderView('_error', [
                 'exception' => $e
             ]);
         }
@@ -72,7 +75,7 @@ class Application{
         $this->controller = $controller;
     }
     
-    public function login(DBModel $user) {
+    public function login(UserModel $user) {
         $this->user = $user;
         $primaryKey = $user->primaryKey();
         $primaryValue = $user->{$primaryKey};
